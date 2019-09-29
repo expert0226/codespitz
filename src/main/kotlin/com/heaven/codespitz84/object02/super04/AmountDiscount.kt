@@ -1,7 +1,7 @@
 package com.heaven.codespitz84.object02.super04
 
-import com.heaven.codespitz84.base.Call
-import com.heaven.codespitz84.base.Money
+import com.heaven.codespitz84.object02.base.Call
+import com.heaven.codespitz84.object02.base.Money
 
 class AmountDiscount(
         private val amount: Money

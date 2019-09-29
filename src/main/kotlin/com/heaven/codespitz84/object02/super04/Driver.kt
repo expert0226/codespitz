@@ -1,6 +1,6 @@
 package com.heaven.codespitz84.object02.super04
 
-import com.heaven.codespitz84.base.Money
+import com.heaven.codespitz84.object02.base.Money
 import java.time.Duration
 
 fun main(args: Array<String>) {

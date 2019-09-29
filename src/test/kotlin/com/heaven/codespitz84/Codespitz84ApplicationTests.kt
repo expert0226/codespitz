@@ -1,4 +1,4 @@
-package com.heaven.codespitz84.object02
+package com.heaven.codespitz84
 
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -1,7 +1,5 @@
 package com.heaven.codespitz83.object01.theater01
 
-import sun.security.krb5.internal.Ticket
-
 class Theater(val fee: Long) {
     private val ticketOffices: MutableList<TicketOffice> = mutableListOf()
 
