@@ -61,7 +61,7 @@ const img = (v, el) => el.src = 'data:text/plain;base64,' + v;
 loader.add("jpg,png", img, el("#a"));
 loader.load("source/3.png");
 
-const loader2 = new Loader('expert0226', 'oopinspring');
+const loader2 = new Loader('expert0226', 'codespitz');
 const md = (v, el) => el.innerHTML = parseMD(v);
 loader2.add("md", md, el("#b"));
-loader2.load("README.md");
+loader2.load("src/main/resources/codespitz79.designpattern/ReadMe.md");
