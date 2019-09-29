@@ -1,6 +1,6 @@
 package com.heaven.codespitz84.object02.chain03
 
-import com.heaven.codespitz84.base.Money
+import com.heaven.codespitz84.object02.base.Money
 import java.time.Duration
 
 fun main(args: Array<String>) {
@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
 
     plan.setCalculator(
             PricePerTime(
-                    AmountDiscount(
+                    com.heaven.codespitz84.object02.chain03.AmountDiscount(
                             Tax(null, 0.1),
                             Money.of(10000)
                     ),

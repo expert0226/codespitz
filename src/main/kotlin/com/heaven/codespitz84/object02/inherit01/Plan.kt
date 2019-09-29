@@ -1,7 +1,7 @@
 package com.heaven.codespitz84.object02.inherit01
 
-import com.heaven.codespitz84.base.Call
-import com.heaven.codespitz84.base.Money
+import com.heaven.codespitz84.object02.base.Call
+import com.heaven.codespitz84.object02.base.Money
 
 public abstract class Plan {
     private val calls = HashSet<Call>()
