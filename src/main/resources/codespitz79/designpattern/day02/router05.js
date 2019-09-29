@@ -56,12 +56,12 @@ class Loader {
 
 const el = v => document.querySelector(v);
 
-const loader = new Loader('feng-fu', 'demo');
+const loader = new Loader('expert0226', 'codespitz');
 const img = (v, el) => el.src = 'data:text/plain;base64,' + v;
-loader.add("jpg,png", img, el("#a"));
-loader.load("source/3.png");
-
-const loader2 = new Loader('expert0226', 'codespitz');
 const md = (v, el) => el.innerHTML = parseMD(v);
-loader2.add("md", md, el("#b"));
-loader2.load("src/main/resources/codespitz79/ReadMe.md");
+
+loader.add("jpg,png", img, el("#a"));
+loader.add("md", md, el("#b"));
+
+loader.load("src/main/resources/codespitz79/designpattern/mvc.jpg");
+loader.load("src/main/resources/codespitz79/designpattern/ReadMe.md");
