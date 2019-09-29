@@ -1,0 +1,8 @@
+:toc:
+:numbered:
+
+= 디자인패턴과 뷰패턴 (CodeSpitz 79)
+
+강의 동영상: link:https://www.youtube.com/watch?v=LB3OvN8ctso&list=PLBNdLLaRx_rLzsln__WwoOuGwt0ZnAmS5[코드스피츠 79 ES6+ 디자인패턴과 뷰패턴]
+
+진도: link:[]

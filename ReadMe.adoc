@@ -1,0 +1,6 @@
+:toc:
+:numbered:
+
+= 진도
+
+link:https://youtu.be/navJTjZlUGk?t=1615[코드스피츠 83 오브젝트 - 1회차(2)]
