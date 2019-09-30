@@ -20,6 +20,7 @@ build/
 *.iml
 *.ipr
 out/
+/.idea/
 
 ### NetBeans ###
 /nbproject/private/
@@ -30,3 +31,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+### MAC ###
+.DS_Store
