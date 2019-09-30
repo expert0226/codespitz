@@ -53,8 +53,8 @@ const d64 = v => decodeURIComponent(
     atob(v).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")
 );
 
-const s75img = new ImageLoader('feng-fu', 'demo', document.querySelector('#a'));
-s75img.load('source/3.png');
+const s75img = new ImageLoader('expert0226', 'codespitz', document.querySelector('#a'));
+s75img.load("src/main/resources/codespitz79/designpattern/mvc.jpg");
 
-const s75md = new MdLoader("expert0226", "oopinspring", document.querySelector("#b"));
-s75md.load("README.md");
+const s75md = new MdLoader("expert0226", "codespitz", document.querySelector("#b"));
+s75md.load("src/main/resources/codespitz79/designpattern/ReadMe.md");
