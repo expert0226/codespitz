@@ -5,10 +5,16 @@ class Github {
 
     load(path) {
         const id = `callback${Github._id++}`;
+        const parser = this._parser;
         Github[id] = ({ data: { content }}) => {
             delete Github[id];
             document.head.removeChild(s);
-            this._parser(content);
+            // Strategy Pattern 인 경우
+            // 실행 시점에 this._loaded 가 가장 최근 것에 매핑되는 상황 발생
+            // imageLoader / MdLoader 연속 호출 시에
+            // iamgeLoader 가 MdLoader 의 _loaded 를 실행하는 버그 발생
+            // this._parser(content);
+            parser(content);
         };
         const s = document.createElement("script");
         s.src = `${this._base + path}?callback=Github.${id}`;
@@ -36,14 +42,12 @@ function parseMD(v) {
 
 const el = v => document.querySelector(v);
 
-const github = new Github('feng-fu', 'demo');
+const github = new Github('expert0226', 'codespitz');
 
 const img = v => el("#a").src = 'data:text/plain;base64,' + v;
 github.parser = img;
-github.load('source/3.png');
-
-const github2 = new Github('expert0226', 'oopinspring');
+github.load("src/main/resources/codespitz79/designpattern/mvc.jpg");
 
 const md = v => el("#b").innerHTML = parseMD(v);
-github2.parser = md;
-github2.load("README.md");
+github.parser = md;
+github.load("src/main/resources/codespitz79/designpattern/ReadMe.md");

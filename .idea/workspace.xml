@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="eca83f33-b1df-42cd-a483-a1d553f4c5e4" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/codespitz79/designpattern/day02/router05.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/codespitz79/designpattern/day02/router05.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/codespitz79/designpattern/day02/strategyPattern03.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/codespitz79/designpattern/day02/strategyPattern03.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/codespitz79/designpattern/day02/templatePattern02.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/codespitz79/designpattern/day02/templatePattern02.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -67,11 +70,11 @@
       <recent name="com.heaven.codespitz84.compose" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/codespitz79/designpattern" />
       <recent name="$PROJECT_DIR$/src/main/resources/codespitz79.designpattern" />
       <recent name="$PROJECT_DIR$/src/main/resources/codespitz79.designpattern/day01" />
       <recent name="$PROJECT_DIR$/src/main/kotlin/com/heaven/codespitz83/worker" />
       <recent name="$PROJECT_DIR$/src/main/kotlin/com/heaven/codespitz83" />
-      <recent name="$PROJECT_DIR$/src/main/kotlin/com/heaven/codespitz84/base" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />

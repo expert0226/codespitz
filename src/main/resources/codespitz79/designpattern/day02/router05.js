@@ -4,11 +4,13 @@ class Github {
     }
 
     load(path) {
-        const id = `callback${Github._id++}`;
+        const id = "callback" + Github._id++;
+        const parser = this._parser;
         Github[id] = ({data: {content}}) => {
             delete Github[id];
             document.head.removeChild(s);
-            this._parser[0](content, ...this._parser[1]);
+            // this._parser[0](content, ...this._parser[1]);
+            parser[0](content, ...parser[1]);
         };
         const s = document.createElement("script");
         s.src = `${this._base + path}?callback=Github.${id}`;
@@ -56,12 +58,12 @@ class Loader {
 
 const el = v => document.querySelector(v);
 
-const loader = new Loader('expert0226', 'codespitz');
+const loader = new Loader('closer27', 'codespitz75');
+
 const img = (v, el) => el.src = 'data:text/plain;base64,' + v;
-const md = (v, el) => el.innerHTML = parseMD(v);
-
 loader.add("jpg,png", img, el("#a"));
-loader.add("md", md, el("#b"));
+loader.load("einBig.png");
 
-loader.load("src/main/resources/codespitz79/designpattern/mvc.jpg");
-loader.load("src/main/resources/codespitz79/designpattern/ReadMe.md");
+const md = (v, el) => el.innerHTML = parseMD(v);
+loader.add("md", md, el("#b"));
+loader.load("README.md");
