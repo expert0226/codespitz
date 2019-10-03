@@ -20,13 +20,13 @@ const Task = class {
 
     list(sort, stateGroup = true) {
         const list = this._list;
-        const f = (a, b) => a['_' + sort] > b['_' + sort] ? 1 : -1;
-        const map = task => task.list(sort, stateGroup);
+        const comparator = (a, b) => a['_' + sort] > b['_' + sort] ? 1 : -1;
+        const mapper = task => task.list(sort, stateGroup);
         return {
             task: this,
-            list: !stateGroup ? list.sort(f).map(map) : [
-                ...list.filter(v => !v.isComplete()).sort(f).map(map),
-                ...list.filter(v => v.isComplete()).sort(f).map(map)
+            list: !stateGroup ? list.sort(comparator).map(mapper) : [
+                ...list.filter(v => !v.isComplete()).sort(comparator).map(mapper),
+                ...list.filter(v => v.isComplete()).sort(comparator).map(mapper)
             ]
         }
     }
@@ -52,9 +52,13 @@ const DomRenderer = class {
 
     _render(parent, list) {
         list.forEach(({ task, list }) => {
+            const checkbox = el("input", { type: "checkbox", checked: task.isComplete() });
+            const div = el("div", { innerHTML: task._title });
+            div.appendChild(checkbox);
+
             const li = parent.appendChild(el("li"));
-            li.appendChild(el("div", { innerHTML: task._title }));
-            li.appendChild(this._render(el("ul"), list));
+            li.appendChild(div);
+            if(list.length) li.appendChild(this._render(el("ul"), list));
         });
         return parent;
     }
@@ -76,6 +80,7 @@ const DomRenderer = class {
 
     sublist[1].task.add("슬라이드 마스터 정리");
     sublist[1].task.add("디자인 개선");
+    sublist[1].task._isComplete = true;
 
     const todo = new DomRenderer("#a");
 

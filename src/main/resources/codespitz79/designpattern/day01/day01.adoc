@@ -1,0 +1,152 @@
+:toc:
+:numbered:
+
+== Day01: es6 Warm Up & 객체 협력 모델
+
+=== ES6
+
+* Symbol()
+* async / await
+** async 는 전파된다.
+** 동기/비동기 로직이 사라진다.
+** 지역 변수에 대한 접근이 가능하다.
+* destructuring
+
+https://youtu.be/LB3OvN8ctso?list=PLBNdLLaRx_rLzsln__WwoOuGwt0ZnAmS5&t=3566
+
+=== Exam01: 통으로 짜여진 소스
+
+link:day01/exam01.html[]
+
+[plantuml, exam01_classe, png]
+....
+class Table {
+    - htmlTagId: String
+    + constructor(htmlTagId: String)
+    + load(url)
+..
+    + render()
+}
+....
+
+* 문제: [red]#SRP 위배# - 단일 책임 클래스가 아니다.
+*** load 메서드와 render 메소드가 한 클래스에 있어 응집도가 낮다.
+
+=== Exam02: 역활에 따른 객체 협력 모델 작성
+
+[plantuml, exam02_classe, png]
+....
+@startuml
+class DataSupplier {
+    - _uri: String
+    + constructor(url)
+    + getInfo(): String
+}
+
+class Renderer {
+    + _info: String
+    - _htmlTagId
+    + constructor(htmlTagId: String)
+    + render(dataSupplier: DataSupplier)
+}
+
+DataSupplier - Renderer
+@enduml
+....
+
+* 문제: [red]#OOP 위배# - 객체 간의 통신에 값을 사용하고 있다.
+** 값(JSON)으로 통신하기 때문에 정합성을 보장할 수 없다.
+** [red]#객체 간의 통신은 정합성을 스스로 보장하는 타입으로 통신# 해야 한다.
+
+* 참고: [red]#함수형은 값으로만 통신해야 한다.#
+
+=== Exam03: 객체 간의 통신은 타입을 통해야 한다.
+
+[plantuml, exam03_classe, png]
+....
+@startuml
+class Info {
+    - title
+    - header
+    - items
+    + constructor(json)
+    + getTitle()
+    + getHeader()
+    + getItems()
+}
+
+class DataSupplier {
+    - _uri: String
+    + constructor(url)
+    + getInfo(): Info
+}
+
+class Renderer {
+    + _info: Info
+    - _htmlTagId
+    + constructor(htmlTagId: String)
+    + render(dataSupplier: DataSupplier)
+}
+
+Info -- DataSupplier
+Info -- Renderer
+DataSupplier - Renderer
+@enduml
+....
+
+* 문제: [red]#OCP 위배# - 도메인 모델과 네이티브 모델이 분할 되어 있지 않다.
+** 네이티브에 사정에 의해 변화가 이미 작성된 코드를 수정해야 한다.
+** 처리기가 늘어날 때마다 기존 코드를 수정해서 분기 처리해야 한다.
+
+=== Exam04: 도메인 객체와 네이티브 객체 분리
+
+[plantuml, exam04_classe, png]
+....
+@startuml
+class Info {
+    - title
+    - header
+    - items
+    + constructor(json)
+    + getTitle()
+    + getHeader()
+    + getItems()
+}
+
+abstract class DataSupplier {
+    + getInfo() : Info
+    - {abstract} _getData()
+}
+
+class JsonDataSupplier {
+    - _uri: String
+    + constructor(url)
+    - _getData()
+}
+
+abstract class Renderer {
+    + _info: Info
+    + render(dataSupplier: DataSupplier)
+    - {abstract} _render()
+}
+
+class TableRenderer {
+    - _htmlTagId
+    + constructor(htmlTagId: String)
+    - {abstract} _render()
+}
+
+class ConsoleRenderer {
+    + constructor()
+    - {abstract} _render()
+}
+
+Info -- DataSupplier
+Info -- Renderer
+DataSupplier <|-- JsonDataSupplier
+DataSupplier <|-- XMLDataSupplier
+DataSupplier - Renderer
+Renderer <|-- TableRenderer
+Renderer <|-- ConsoleRenderer
+@enduml
+....
