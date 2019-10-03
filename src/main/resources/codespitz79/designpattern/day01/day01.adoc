@@ -34,7 +34,10 @@ class Table {
 
 === Exam02: SRP 적용
 
-* 역활에 따른 객체 협력 모델 작성
+* 책임, 역할, 협력 모데 구축
+** 책임을 갖는 역활에 따라 객체 협력 모델 작성
+
+link:day01/exam02.html[]
 
 [plantuml, exam02_classe, png]
 ....
@@ -64,7 +67,10 @@ DataSupplier - Renderer
 
 === Exam03: OOP 요건 적용
 
-* 객체 간의 통신은 타입을 통해야 한다.
+link:day01/exam03.html[]
+
+* OOP 에서 객체 간의 통신
+** 값이 아닌 #정합성을 스스로 보장하는 타입# 을 주고 받아야 한다.
 
 [plantuml, exam03_classe, png]
 ....
@@ -103,6 +109,8 @@ DataSupplier - Renderer
 ** 처리기가 늘어날 때마다 기존 코드를 수정해서 분기 처리해야 한다.
 
 === Exam04: OCP 적용
+
+link:day01/exam04.html[]
 
 * 도메인 객체와 네이티브 객체 분리
 ** Template Method Pattern
