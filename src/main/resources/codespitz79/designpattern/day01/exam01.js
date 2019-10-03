@@ -13,10 +13,10 @@ const Table = (_ => {
             const { title, header, items } = await response.json();
             if (!items.length) throw "no items";
             Object.assign(this[Private], { title, header, items });
-            this.render();
+            this._render();
         }
 
-        render() {
+        _render() {
             const { htmlTagId, title, header, items } = this[Private];
 
             // 부모, 데이터 체크

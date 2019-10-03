@@ -18,15 +18,28 @@ https://youtu.be/LB3OvN8ctso?list=PLBNdLLaRx_rLzsln__WwoOuGwt0ZnAmS5&t=3566
 
 link:day01/exam01.html[]
 
-[plantuml, exam01_classe, png]
+[plantuml, exam01_class, png]
 ....
 class Table {
     - htmlTagId: String
-    + constructor(htmlTagId: String)
-    + load(url)
-..
-    + render()
+    + constructor(htmlTagId: String): Table
+    + load(uri: String): Void
+    - _render(): Void
 }
+....
+
+[plantuml, exam01_sequence, png]
+....
+actor client
+participant table <<Table>>
+
+client -> table: constructor(htmlTagId: String): Table
+activate table
+return table
+
+client -> table: load(uri: String): Void
+activate table
+table -> table: _render(): Void
 ....
 
 * 문제: [red]#SRP 위배# - 단일 책임 클래스가 아니다.
@@ -39,24 +52,46 @@ class Table {
 
 link:day01/exam02.html[]
 
-[plantuml, exam02_classe, png]
+[plantuml, exam02_class, png]
 ....
 @startuml
 class DataSupplier {
     - _uri: String
-    + constructor(url)
+    + constructor(uri: String): DataSupplier
     + getInfo(): String
 }
 
 class Renderer {
     + _info: String
-    - _htmlTagId
-    + constructor(htmlTagId: String)
-    + render(dataSupplier: DataSupplier)
+    - _htmlTagId: String
+    + constructor(htmlTagId: String): Renderer
+    + render(dataSupplier: DataSupplier): Void
+    - _render(): Void
 }
 
 DataSupplier - Renderer
 @enduml
+....
+
+[plantuml, exam02_sequence, png]
+....
+actor client
+participant dataSupplier <<DataSupplier>>
+participant renderer <<Renderer>>
+
+client -> dataSupplier: constructor(uri: String): DataSupplier
+activate dataSupplier
+return dataSupplier
+
+client -> renderer: constructor(htmlTagId: String): Renderer
+activate renderer
+return renderer
+
+client -> renderer: render(dataSupplier: DataSupplier): Void
+activate renderer
+dataSupplier <- renderer : getInfo(): String
+dataSupplier --> renderer: json: String
+renderer -> renderer: _render(): Void
 ....
 
 * 문제: [red]#OOP 위배# - 객체 간의 통신에 값을 사용하고 있다.
@@ -72,36 +107,59 @@ link:day01/exam03.html[]
 * OOP 에서 객체 간의 통신
 ** 값이 아닌 #정합성을 스스로 보장하는 타입# 을 주고 받아야 한다.
 
-[plantuml, exam03_classe, png]
+[plantuml, exam03_class, png]
 ....
 @startuml
 class Info {
-    - title
-    - header
-    - items
-    + constructor(json)
-    + getTitle()
-    + getHeader()
-    + getItems()
+    - title: String
+    - header: String
+    - items: String
+    + constructor(json: String): Info
+    + getTitle(): String
+    + getHeader(): String
+    + getItems(): String
 }
 
 class DataSupplier {
     - _uri: String
-    + constructor(url)
+    + constructor(uri: String): DataSupplier
     + getInfo(): Info
 }
 
 class Renderer {
     + _info: Info
-    - _htmlTagId
-    + constructor(htmlTagId: String)
-    + render(dataSupplier: DataSupplier)
+    - _htmlTagId: String
+    + constructor(htmlTagId: String): Renderer
+    + render(dataSupplier: DataSupplier): Void
+    - _render(): Void
 }
 
 Info -- DataSupplier
 Info -- Renderer
 DataSupplier - Renderer
 @enduml
+....
+
+[plantuml, exam03_sequence, png]
+....
+actor client
+participant dataSupplier <<DataSupplier>>
+participant renderer <<Renderer>>
+
+client -> dataSupplier: constructor(uri: String): DataSupplier
+activate dataSupplier
+return dataSupplier
+
+client -> renderer: constructor(htmlTagId: String): Renderer
+activate renderer
+return renderer
+
+client -> renderer: render(dataSupplier: DataSupplier): Void
+activate renderer
+dataSupplier <- renderer: getInfo(): String
+activate dataSupplier
+dataSupplier --> renderer: json: String
+renderer -> renderer: _render(): Void
 ....
 
 * 문제: [red]#OCP 위배# - 도메인 모델과 네이티브 모델이 분할 되어 있지 않다.
@@ -115,7 +173,7 @@ link:day01/exam04.html[]
 * 도메인 객체와 네이티브 객체 분리
 ** Template Method Pattern
 
-[plantuml, exam04_classe, png]
+[plantuml, exam04_class, png]
 ....
 @startuml
 class Info {
@@ -135,7 +193,7 @@ abstract class DataSupplier {
 
 class JsonDataSupplier {
     - _uri: String
-    + constructor(url)
+    + constructor(uri)
     - _getData()
 }
 
@@ -164,4 +222,28 @@ DataSupplier - Renderer
 Renderer <|-- TableRenderer
 Renderer <|-- ConsoleRenderer
 @enduml
+....
+
+[plantuml, exam04_sequence, png]
+....
+actor client
+participant dataSupplier <<JsonDataSupplier>>
+participant renderer <<TableRenderer>>
+
+client -> dataSupplier: constructor(uri: String): JsonDataSupplier
+activate dataSupplier
+return dataSupplier
+
+client -> renderer: constructor(htmlTagId: String): TableRenderer
+activate renderer
+return renderer
+
+client -> renderer: render(dataSupplier: DataSupplier): Void
+activate renderer
+dataSupplier <- renderer: getInfo(): Info
+activate dataSupplier
+dataSupplier -> dataSupplier: _getData(): Void
+dataSupplier --> renderer: info: Info
+deactivate dataSupplier
+renderer -> renderer: _render(): Void
 ....

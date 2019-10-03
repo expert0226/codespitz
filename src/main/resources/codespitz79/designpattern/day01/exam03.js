@@ -35,12 +35,18 @@ class Renderer {
     async render(dataSupplier) {
         if(!(dataSupplier instanceof DataSupplier)) throw "invalid data type";
         this._info = await dataSupplier.getInfo();
+        this._render();
+    }
+
+    async _render() {
+        const { title, header, items } = this._info;
+        if(typeof title != "string" || !title) throw "invalid title";
+        if(!Array.isArray(header) || !header.length) throw "invalid header";
+        if(!Array.isArray(items) || !items.length) throw "invalid header";
 
         // 부모, 데이터 체크
         const htmlTag = document.querySelector(this._htmlTagId);
         if(!htmlTag) throw "invalid parent element";
-
-        const { title, header, items } = this._info;
 
         if(!items || !items.length) {
             htmlTag.innerHTML = "no data";
