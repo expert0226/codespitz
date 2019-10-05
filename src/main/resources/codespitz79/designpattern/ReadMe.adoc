@@ -38,10 +38,12 @@
 
 == 코드 작성 전략
 
-=== 객체 지향 언어
+=== 객체 지향 언어의 필수 요건
 
 * 대체 가능성
+** LSP
 * 내적 일관성(동질성)
+** Overriding
 
 === 추상화
 
@@ -120,7 +122,9 @@
 *** Visitor Pattern
 
 // TODO: 주석 해제
-// include::day01/day01.adoc[1 일차]
-// include::day03/day03.adoc[3 일차]
+//:imagesdir: day01
+//include::day01/day01.adoc[1 일차]
+//:imagesdir: day02
+//include::day02/day02.adoc[2 일차]
 
 진도: link:https://youtu.be/LB3OvN8ctso?list=PLBNdLLaRx_rLzsln__WwoOuGwt0ZnAmS5&t=4935[]]

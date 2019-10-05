@@ -2,6 +2,7 @@
 :numbered:
 
 == Day01: es6 Warm Up & 객체 협력 모델
+ifndef::imagesdir:[:imagesdir: .]
 
 === ES6
 
@@ -16,7 +17,7 @@ https://youtu.be/LB3OvN8ctso?list=PLBNdLLaRx_rLzsln__WwoOuGwt0ZnAmS5&t=3566
 
 === Exam01: 통으로 짜여진 소스
 
-link:day01/exam01.html[]
+link:{imagesdir}/exam01.html[]
 
 [plantuml, exam01_class, png]
 ....
@@ -50,7 +51,9 @@ table -> table: _render(): Void
 * 책임, 역할, 협력 모데 구축
 ** 책임을 갖는 역활에 따라 객체 협력 모델 작성
 
-link:day01/exam02.html[]
+WARNING: private 을 Symbol() 처리해야 하지만 이후는 편의 상 _ 로 대신 처
+
+link:{imagesdir}/exam02.html[]
 
 [plantuml, exam02_class, png]
 ....
@@ -102,7 +105,7 @@ renderer -> renderer: _render(): Void
 
 === Exam03: OOP 요건 적용
 
-link:day01/exam03.html[]
+link:{imagesdir}/exam03.html[]
 
 * OOP 에서 객체 간의 통신
 ** 값이 아닌 #정합성을 스스로 보장하는 타입# 을 주고 받아야 한다.
@@ -168,7 +171,7 @@ renderer -> renderer: _render(): Void
 
 === Exam04: OCP 적용
 
-link:day01/exam04.html[]
+link:{imagesdir}/exam04.html[]
 
 * 도메인 객체와 네이티브 객체 분리
 ** Template Method Pattern
