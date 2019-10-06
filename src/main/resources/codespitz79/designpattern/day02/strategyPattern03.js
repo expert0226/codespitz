@@ -5,14 +5,14 @@ class Github {
 
     load(path) {
         const callback = `callback${Github._callbackId++}`;
+        // Strategy Pattern 인 경우
+        // 실행 시점에 this._loaded 가 가장 최근 것에 매핑되는 상황 발생
+        // imageLoader / MdLoader 연속 호출 시에
+        // iamgeLoader 가 MdLoader 의 _loaded 를 실행하는 버그 발생
         const parser = this._parser;
         Github[callback] = ({ data: { content }}) => {
             delete Github[callback];
             document.head.removeChild(callbackScript);
-            // Strategy Pattern 인 경우
-            // 실행 시점에 this._loaded 가 가장 최근 것에 매핑되는 상황 발생
-            // imageLoader / MdLoader 연속 호출 시에
-            // iamgeLoader 가 MdLoader 의 _loaded 를 실행하는 버그 발생
             // this._parser(content);
             parser(content);
         };
@@ -45,8 +45,9 @@ const getHtmlTagUsingHtmlTagId = htmlTagId => document.querySelector(htmlTagId);
 const imgParser = content => getHtmlTagUsingHtmlTagId("#a").src = 'data:text/plain;base64,' + content;
 const mdParser = content => getHtmlTagUsingHtmlTagId("#b").innerHTML = parseMD(content);
 
+const subPath = "src/main/resources/codespitz79/designpattern/";
+
 {
-    const subPath = "src/main/resources/codespitz79/designpattern/";
     const github = new Github('expert0226', 'codespitz');
 
     github.parser = imgParser;

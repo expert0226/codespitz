@@ -40,11 +40,11 @@ class Loader {
     }
 
     add(ext, command) {
-        ext.split(",").forEach(v => this._router.set(v, command));
+        ext.toLowerCase().split(",").forEach(v => this._router.set(v, command));
     }
 
     load(path) {
-        const ext = path.split(".").pop();
+        const ext = path.split(".").pop().toLowerCase();
         if (!this._router.has(ext)) return;
         this._github.command = this._router.get(ext);
         this._github.load(path);
@@ -70,8 +70,9 @@ const getHtmlTagUsingHtmlTagId = htmlTagId => document.querySelector(htmlTagId);
 const imgParser = (content, htmlImageTag) => htmlImageTag.src = 'data:text/plain;base64,' + content;
 const mdParser = (content, htmlTag) => htmlTag.innerHTML = parseMD(content);
 
+const subPath = "src/main/resources/codespitz79/designpattern/";
+
 {
-    const subPath = "src/main/resources/codespitz79/designpattern/";
     const loader = new Loader('expert0226', 'codespitz');
 
     const imgCommand = new Command(imgParser, getHtmlTagUsingHtmlTagId("#a"));

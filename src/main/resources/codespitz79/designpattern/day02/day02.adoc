@@ -30,9 +30,28 @@ link:{imagesdir}/index01.html[]
 * 객체 관계
 * ...
 
-=== if 는 절대로 제거할 수 없다.
+=== #상태에 대한 분기는 사라지지 않는다.#
 
-* #if 만큼의 객체를 만들고, 그 선택을 Client 까지 밀어내라.#
+그 분기가 필요해서 태어났기 때문이다.
+
+.하지만 정의 시점에 제거하는 방법은 있다.
+* 분기 수 만큼 객체를 만들고
+* 실행 시점에 경우의 수를 공급한다.
+
+=== 분기를 실행 시점으로 옮길 때의 장단점
+
+.장점: 일정한 통제 범위 내에서 확장 가능한 알고리즘 설계 가능
+* 정의 시점에 모든 경우를 몰라도 됨
+* 정의 시점에 그 경우를 처리하는 방법도 몰라도 됨
+* 예: 게임 초기에 향후 모든 무기를 고래햐지 않아도 된다.
+
+.단점: 매 호스트 코드마다 안정성을 따로 담보해야 함
+* 실행 시점에 모든 경우를 반드시 기술해야 함
+* 실행 시점마다 알고리즘의 안정성을 담보해야 함
+
+.단점 극복 패턴: 패턴은 패턴으로 안정성을 답보해야 한다.
+* Factory Pattern
+* Builder Pattern
 
 === 제어문 기반의 알고림즘이 갖는 문제
 
@@ -56,15 +75,58 @@ is a (kind of)
 
 has a
 
-==== 속도와 메모리는 바꿀 수 있다.
+=== 속도와 메모리는 바꿀 수 있다.
 
 성능과 저장 공간은 바꿀 수 있다.
 
-=== Template Pattern - 상속 위임
+=== 함수는 값이다.
 
-link:{imagesdir}/templatePattern02.html[]
+* 식은 값이다.
+* 함수는 식이다.
+* #함수는 값이다.#
+* #메모리와 연산는 상호교환 가능하다.#
 
-[plantuml, templatePattern_class, png]
+디자인 패턴은 연산을 많이 쓰는 방식으로 발전했다.
+메모리가 귀할 때 나온 것이기 때문이다.
+게임 업계에서는 속도를 높이기 위해 연산보다 메모리를 많이 사용하는 쪽으로 발젆했다.
+따라서 게임에서는 디자인 패턴을 거의 적용하지 않는다.
+
+=== 디자인 패턴의 2번째 원리
+
+문으로 구성하면 다시 컴파일해야 하는 문제를 없애기 위해 문을 제거해서 값(식)으로 바꿀 수 있는 객체화 시키기
+
+=== if 를 제거하기 위한 패턴
+
+* Template Method Pattern
+* Strategy Pattern
+* State Pattern
+
+=== loop 를 제거하기 위한 패턴
+
+* Iterator Pattern
+* Composite Pattern
+* Visitor Pattern
+
+=== loop 이후 if 를 제거하기 위한 패턴 (예: sum, every)
+
+* Decorator Pattern
+* Chain Of Responsiblity Pattern
+
+=== 절차적인 부분을 값으로 하고 싶을 때
+
+* Command Pattern
+* Mediator Pattern
+
+=== 여러 개의 객체들의 조립해야 할 때
+
+* Builder Pattern
+* Facade Pattern
+
+=== Template Method Pattern - 상속 위임
+
+link:{imagesdir}/templateMethodPattern02.html[]
+
+[plantuml, templateMethodPattern_class, png]
 .....
 Github <|-- ImageLoader
 Github <|-- MdLoader
@@ -97,7 +159,7 @@ class MdLoader {
 }
 .....
 
-[plantuml, templatePattern_sequence, png]
+[plantuml, templateMethodPattern_sequence, png]
 .....
 actor client
 participant s75img <<ImageLoader>>
@@ -134,6 +196,8 @@ deactivate s75md
 .....
 
 === Strategy Pattern - 소유 위임
+
+Template Method Pattern 과 Strategy Pattern 반드시 1:1 교환할 수 있다.
 
 link:{imagesdir}/strategyPattern03.html[]
 
@@ -186,8 +250,12 @@ deactivate github
 
 전략 패턴의 발전형
 
-* Comand
-** 전략 객체 & 전략이 사용하는 인자들을 묶어서 하나의 커맨드 객체로 만들어 사용
+* Command 객체
+** 함수와 그 함수가 사용하는 인자들을 묶어서 하나의 커맨드 객체로 만들어 저장
+
+* Command Pattern 구성 요소
+** Command 객체
+** Invoker
 
 link:{imagesdir}/commandPattern04.html[]
 
@@ -260,7 +328,12 @@ deactivate gitHub
 
 === Router
 
-Router: 경로 + 경로 해석기
+모든 경우의 수를 알 수 있다면, 경우와 그 해결책을 테이블에 저장할 수 있다.
+
+발생 가능한 경우의 수를 값으로 기술한다.
+
+* Router 의 구성 요소
+** Routing Table: Map<경우, 해결책>
 
 link:{imagesdir}/router05.html[]
 

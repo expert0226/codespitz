@@ -53,8 +53,9 @@ const d64 = content => decodeURIComponent(
     atob(content).split("").map(char => "%" + ("00" + char.charCodeAt(0).toString(16)).slice(-2)).join("")
 );
 
+const subPath = "src/main/resources/codespitz79/designpattern/";
+
 {
-    const subPath = "src/main/resources/codespitz79/designpattern/";
     const s75img = new ImageLoader('expert0226', 'codespitz', document.querySelector('#a'));
     s75img.load(`${subPath}mvc.jpg`);
 

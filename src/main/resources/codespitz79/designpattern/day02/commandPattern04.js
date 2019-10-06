@@ -52,8 +52,9 @@ const getHtmlTagUsingHtmlTagId = htmlTagId => document.querySelector(htmlTagId);
 const imgParser = (content, htmlImageTag) => htmlImageTag.src = 'data:text/plain;base64,' + content;
 const mdParser = (content, htmlTag) => htmlTag.innerHTML = parseMD(content);
 
+const subPath = "src/main/resources/codespitz79/designpattern/";
+
 {
-    const subPath = "src/main/resources/codespitz79/designpattern/";
     const github = new Github('expert0226', 'codespitz');
 
     const imgCommand = new Command(imgParser, getHtmlTagUsingHtmlTagId("#a"));
