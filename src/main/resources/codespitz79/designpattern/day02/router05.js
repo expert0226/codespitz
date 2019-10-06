@@ -1,6 +1,6 @@
 class Github {
-    constructor(githubId, githubRepoName) {
-        this._githubUriTemplate = `https://api.github.com/repos/${githubId}/${githubRepoName}/contents/`;
+    constructor(userId, repoName) {
+        this._githubUriTemplate = `https://api.github.com/repos/${userId}/${repoName}/contents/`;
     }
 
     load(path) {

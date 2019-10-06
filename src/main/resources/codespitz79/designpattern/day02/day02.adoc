@@ -78,20 +78,20 @@ class Github {
     - {static} _callbackId: int
     - {static} callback: Function
     - _githubUriTemplate: String
-    + constructor(githubId: String, githubRepoName: String): GitHub
+    + constructor(userId: String, githubRepoName: String): GitHub
     + load(path: String): Void
     - {abstract} _loaded(content: String): Void
 }
 
 class ImageLoader {
     - _jsonpScript: HtmlTag
-    + constructor(githubId: String, githubRepoName: String, jsonpScript: HtmlTag)
+    + constructor(userId: String, repoName: String, jsonpScript: HtmlTag)
     - _loaded(content: String): Void
 }
 
 class MdLoader {
     - _jsonpScript: HtmlTag
-    + constructor(githubId: String, githubRepoName: String, jsonpScript: HtmlTag)
+    + constructor(userId: String, githubRepoName: String, jsonpScript: HtmlTag)
     - _loaded(content: String): Void
     - _parseMD(content: String): Void
 }
@@ -103,7 +103,7 @@ actor client
 participant s75img <<ImageLoader>>
 participant s75md <<MdLoader>>
 
-client -> s75img: constructor(githubId, githubRepoName, jsonpScript): ImageLoader
+client -> s75img: constructor(userId, githubRepoName, jsonpScript): ImageLoader
 activate s75img
 return s75img
 
@@ -114,7 +114,7 @@ activate s75img
     deactivate s75img
 deactivate s75img
 
-client -> s75md: constructor(githubId, githubRepoName, jsonpScript): ImageLoader
+client -> s75md: constructor(userId, githubRepoName, jsonpScript): ImageLoader
 activate s75md
 return s75md
 
@@ -151,7 +151,7 @@ class Github {
     - {static} _callbackId: int
     - {static} callback: Function
     - _githubUriTemplate: String
-    + constructor(githubId: String, githubRepoName: String): GitHub
+    + constructor(userId: String, githubRepoName: String): GitHub
     + load(path: String): Void
     + parser(parser: Function): Setter
 }
@@ -161,25 +161,25 @@ class Github {
 .....
 actor client
 
-client -> gitHub: constructor(githubId, githubRepoName): Github
-activate gitHub
-return gitHub
+client -> github: constructor(userId, githubRepoName): Github
+activate github
+return github
 
-client -> gitHub: parser(imgParser): Setter
-activate gitHub
-deactivate gitHub
+client -> github: parser(imgParser): Setter
+activate github
+deactivate github
 
-client -> gitHub: load(path): Void
-activate gitHub
-deactivate gitHub
+client -> github: load(path): Void
+activate github
+deactivate github
 
-client -> gitHub: parser(mdParser): Setter
-activate gitHub
-deactivate gitHub
+client -> github: parser(mdParser): Setter
+activate github
+deactivate github
 
-client -> gitHub: load(path): Void
-ctivate gitHub
-deactivate gitHub
+client -> github: load(path): Void
+activate github
+deactivate github
 .....
 
 === Command Pattern
@@ -208,7 +208,7 @@ class Github {
     - {static} callback: Function
     - _githubUriTemplate: String
     - _command: Command
-    + constructor(githubId: String, githubRepoName: String): GitHub
+    + constructor(userId: String, githubRepoName: String): GitHub
     + load(path: String): Void
     + command(command: Command): Setter
 }
@@ -229,7 +229,7 @@ participant gitHub <<Github>>
 participant imgCommand <<Command>>
 participant mdCommand <<Command>>
 
-client -> gitHub: constructor(githubId: String, githubRepoName: String): Github
+client -> gitHub: constructor(userId: String, githubRepoName: String): Github
 activate gitHub
 return gitHub
 
@@ -283,7 +283,7 @@ class Github {
     - {static} callback: Function
     - _githubUriTemplate: String
     - _command: Command
-    + constructor(githubId: String, githubRepoName: String): GitHub
+    + constructor(userId: String, githubRepoName: String): GitHub
     + load(path: String): Void
     + command(command: Command): Setter
 }
@@ -299,7 +299,7 @@ class Command {
 class Loader {
     - _github: Github
     - _router: Map
-    + constructor(githubId: String, githubRepoName: String): Loader
+    + constructor(userId: String, githubRepoName: String): Loader
     + add(ext: String, command: Command): Void
     + load(path: String): Void
 }
@@ -313,9 +313,9 @@ participant github <<Github>>
 participant imgCommand <<Command>>
 participant mdCommand <<Command>>
 
-client -> loader: constructor(githubId: String, githubRepoName: String): Loader
+client -> loader: constructor(userId: String, githubRepoName: String): Loader
 activate loader
-    loader -> github: constructor(githubId: String, githubRepoName: String): GitHub
+    loader -> github: constructor(userId: String, githubRepoName: String): GitHub
     activate github
     loader <- github: gitHub: GitHub
     deactivate github
