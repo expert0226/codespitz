@@ -1,14 +1,14 @@
 class Github {
-    constructor(id, repo) {
-        this._base = `https://api.github.com/repos/${id}/${repo}/contents/`;
+    constructor(githubId, githubRepoName) {
+        this._githubUriTemplate = `https://api.github.com/repos/${githubId}/${githubRepoName}/contents/`;
     }
 
     load(path) {
-        const id = `callback${Github._id++}`;
+        const callback = `callback${Github._callbackId++}`;
         const parser = this._parser;
-        Github[id] = ({ data: { content }}) => {
-            delete Github[id];
-            document.head.removeChild(s);
+        Github[callback] = ({ data: { content }}) => {
+            delete Github[callback];
+            document.head.removeChild(callbackScript);
             // Strategy Pattern 인 경우
             // 실행 시점에 this._loaded 가 가장 최근 것에 매핑되는 상황 발생
             // imageLoader / MdLoader 연속 호출 시에
@@ -16,38 +16,42 @@ class Github {
             // this._parser(content);
             parser(content);
         };
-        const s = document.createElement("script");
-        s.src = `${this._base + path}?callback=Github.${id}`;
-        document.head.appendChild(s);
+        const callbackScript = document.createElement("script");
+        callbackScript.src = `${this._githubUriTemplate + path}?callback=Github.${callback}`;
+        document.head.appendChild(callbackScript);
     }
 
-    set parser(v) { this._parser = v; }
+    set parser(parser) { this._parser = parser; }
 }
 
-Github._id = 0;
+Github._callbackId = 0;
 
-const d64 = v => decodeURIComponent(
-    atob(v).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")
+const d64 = content => decodeURIComponent(
+    atob(content).split("").map(char => "%" + ("00" + char.charCodeAt(0).toString(16)).slice(-2)).join("")
 );
 
-function parseMD(v) {
-    return d64(v).split("\n").map(v => {
+function parseMD(content) {
+    return d64(content).split("\n").map(lineContent => {
         let i = 3;
         while (i--) {
-            if(v.startsWith("#".repeat(i + 1))) return `<h$[i+1}>${v.substr(i + 1)}</h${i + 1}>`;
+            if(lineContent.startsWith("#".repeat(i + 1))) return `<h$[i+1}>${lineContent.substr(i + 1)}</h${i + 1}>`;
         }
-        return v;
+        return lineContent;
     }).join("<br>");
 }
 
-const el = v => document.querySelector(v);
+const getHtmlTagUsingHtmlTagId = htmlTagId => document.querySelector(htmlTagId);
 
-const github = new Github('expert0226', 'codespitz');
+const imgParser = content => getHtmlTagUsingHtmlTagId("#a").src = 'data:text/plain;base64,' + content;
+const mdParser = content => getHtmlTagUsingHtmlTagId("#b").innerHTML = parseMD(content);
 
-const img = v => el("#a").src = 'data:text/plain;base64,' + v;
-github.parser = img;
-github.load("src/main/resources/codespitz79/designpattern/mvc.jpg");
+{
+    const subPath = "src/main/resources/codespitz79/designpattern/";
+    const github = new Github('expert0226', 'codespitz');
 
-const md = v => el("#b").innerHTML = parseMD(v);
-github.parser = md;
-github.load("src/main/resources/codespitz79/designpattern/ReadMe.md");
+    github.parser = imgParser;
+    github.load(`${subPath}mvc.jpg`);
+
+    github.parser = mdParser;
+    github.load(`${subPath}ReadMe.md`);
+}

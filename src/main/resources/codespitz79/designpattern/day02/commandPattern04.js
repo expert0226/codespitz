@@ -1,49 +1,66 @@
 class Github {
-    constructor(id, repo) {
-        this._base = `https://api.github.com/repos/${id}/${repo}/contents/`;
+    constructor(githubId, githubRepoName) {
+        this._githubUriTemplate = `https://api.github.com/repos/${githubId}/${githubRepoName}/contents/`;
     }
 
     load(path) {
-        const id = `callback${Github._id++}`;
-        Github[id] = ({ data: { content }}) => {
-            delete Github[id];
-            document.head.removeChild(s);
-            this._parser[0](content, ...this._parser[1]);
+        const callback = `callback${Github._callbackId++}`;
+        const { parser, args } = this._command;
+        Github[callback] = ({ data: { content }}) => {
+            delete Github[callback];
+            document.head.removeChild(callbackScript);
+            parser(content, ...args);
         };
-        const s = document.createElement("script");
-        s.src = `${this._base + path}?callback=Github.${id}`;
-        document.head.appendChild(s);
+        const callbackScript = document.createElement("script");
+        callbackScript.src = `${this._githubUriTemplate + path}?callback=Github.${callback}`;
+        document.head.appendChild(callbackScript);
     }
 
-    setParser(f, ...arg) { this._parser = [f, arg]; }
+    set command(command) {
+        this._command = command;
+    }
 }
 
-Github._id = 0;
+Github._callbackId = 0;
 
-const d64 = v => decodeURIComponent(
-    atob(v).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")
+class Command {
+    constructor(parser, ...args) {
+        this._parser = parser;
+        this._args = args;
+    }
+
+    get parser() { return this._parser; }
+    get args() { return this._args; }
+}
+
+const d64 = content => decodeURIComponent(
+    atob(content).split("").map(char => "%" + ("00" + char.charCodeAt(0).toString(16)).slice(-2)).join("")
 );
 
-function parseMD(v) {
-    return d64(v).split("\n").map(v => {
+function parseMD(content) {
+    return d64(content).split("\n").map(lineContent => {
         let i = 3;
         while (i--) {
-            if(v.startsWith("#".repeat(i + 1))) return `<h$[i+1}>${v.substr(i + 1)}</h${i + 1}>`;
+            if(lineContent.startsWith("#".repeat(i + 1))) return `<h$[i+1}>${lineContent.substr(i + 1)}</h${i + 1}>`;
         }
-        return v;
+        return lineContent;
     }).join("<br>");
 }
 
-const el = v => document.querySelector(v);
+const getHtmlTagUsingHtmlTagId = htmlTagId => document.querySelector(htmlTagId);
 
-const github = new Github('feng-fu', 'demo');
+const imgParser = (content, htmlImageTag) => htmlImageTag.src = 'data:text/plain;base64,' + content;
+const mdParser = (content, htmlTag) => htmlTag.innerHTML = parseMD(content);
 
-const img = (v, el) => el.src = 'data:text/plain;base64,' + v;
-github.setParser(img, el("#a"));
-github.load('source/3.png');
+{
+    const subPath = "src/main/resources/codespitz79/designpattern/";
+    const github = new Github('expert0226', 'codespitz');
 
-const github2 = new Github('expert0226', 'oopinspring');
+    const imgCommand = new Command(imgParser, getHtmlTagUsingHtmlTagId("#a"));
+    github.command = imgCommand;
+    github.load(`${subPath}mvc.jpg`);
 
-const md = (v, el) => el.innerHTML = parseMD(v);
-github2.setParser(md, el("#b"));
-github2.load("README.md");
+    const mdCommand = new Command(mdParser, getHtmlTagUsingHtmlTagId("#b"));
+    github.command = mdCommand;
+    github.load(`${subPath}ReadMe.md`);
+}

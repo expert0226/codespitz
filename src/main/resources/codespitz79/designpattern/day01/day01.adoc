@@ -41,6 +41,9 @@ return table
 client -> table: load(uri: String): Void
 activate table
 table -> table: _render(): Void
+activate table
+deactivate table
+deactivate table
 ....
 
 * 문제: [red]#SRP 위배# - 단일 책임 클래스가 아니다.
@@ -93,8 +96,13 @@ return renderer
 client -> renderer: render(dataSupplier: DataSupplier): Void
 activate renderer
 dataSupplier <- renderer : getInfo(): String
+activate dataSupplier
 dataSupplier --> renderer: json: String
+deactivate dataSupplier
 renderer -> renderer: _render(): Void
+activate renderer
+deactivate renderer
+deactivate renderer
 ....
 
 * 문제: [red]#OOP 위배# - 객체 간의 통신에 값을 사용하고 있다.
@@ -162,7 +170,11 @@ activate renderer
 dataSupplier <- renderer: getInfo(): String
 activate dataSupplier
 dataSupplier --> renderer: json: String
+deactivate dataSupplier
 renderer -> renderer: _render(): Void
+activate renderer
+deactivate renderer
+deactivate renderer
 ....
 
 * 문제: [red]#OCP 위배# - 도메인 모델과 네이티브 모델이 분할 되어 있지 않다.
@@ -246,7 +258,13 @@ activate renderer
 dataSupplier <- renderer: getInfo(): Info
 activate dataSupplier
 dataSupplier -> dataSupplier: _getData(): Void
+activate dataSupplier
+deactivate dataSupplier
 dataSupplier --> renderer: info: Info
 deactivate dataSupplier
+deactivate dataSupplier
 renderer -> renderer: _render(): Void
+activate renderer
+deactivate renderer
+deactivate renderer
 ....

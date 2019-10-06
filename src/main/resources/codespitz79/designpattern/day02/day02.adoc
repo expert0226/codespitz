@@ -1,0 +1,365 @@
+:toc:
+:numbered:
+
+== Day02: 디자인 패턴
+ifndef::imagesdir:[:imagesdir: .]
+
+=== 객체 지향 언어의 필수 요건
+
+* 대체 가능성
+** LSP
+* 내적 일관성(동질성)
+** Overriding
+
+link:{imagesdir}/index01.html[]
+
+=== Design Pattern Category: 구.행.성
+
+태양계 - 9행성: 수금지화목토천해명
+
+* 구조패턴
+* 행동패턴
+* 생성패턴
+
+=== 객체 지향 설계를 학습할 수 있는 분류
+
+* 변화율
+* 캡슐화
+* 다형성
+* 역활 모델
+* 객체 관계
+* ...
+
+=== if 는 절대로 제거할 수 없다.
+
+* #if 만큼의 객체를 만들고, 그 선택을 Client 까지 밀어내라.#
+
+=== 제어문 기반의 알고림즘이 갖는 문제
+
+* 수정하면 전체가 검파일 됨
+* #알고리즘이 변화한 부분만 수정하고 나머지는 건드리고 싶지 않다면?#
+** 방법 1: 최대한 개별 알고리즘을 함수로 추출한다. (프로시저 지향 -절차 지향)
+*** 해결 안 된 문제: 경우가 변경될 때
+*** 해결 안 된 문제: 공통 의존 데이터 문제
+**** 상태에 대한 의존성이 여러 함수에 걸쳐 나타난다.
+** 방법 2: 상태의 상태를 사용하는 기능의 캡슐화 (객체 지향)
+*** 상속 위임
+*** 소유 위임
+
+=== 객체 지향에서 알고리즘 분화 시 선택할 수 있는 두 가지 방법
+
+==== 상속 위임
+
+is a (kind of)
+
+==== 소유 위임
+
+has a
+
+==== 속도와 메모리는 바꿀 수 있다.
+
+성능과 저장 공간은 바꿀 수 있다.
+
+=== Template Pattern - 상속 위임
+
+link:{imagesdir}/templatePattern02.html[]
+
+[plantuml, templatePattern_class, png]
+.....
+Github <|-- ImageLoader
+Github <|-- MdLoader
+Global <-- MdLoader
+
+class Global {
+    {static} d64: Function
+}
+
+class Github {
+    - {static} _callbackId: int
+    - {static} callback: Function
+    - _githubUriTemplate: String
+    + constructor(githubId: String, githubRepoName: String): GitHub
+    + load(path: String): Void
+    - {abstract} _loaded(content: String): Void
+}
+
+class ImageLoader {
+    - _jsonpScript: HtmlTag
+    + constructor(githubId: String, githubRepoName: String, jsonpScript: HtmlTag)
+    - _loaded(content: String): Void
+}
+
+class MdLoader {
+    - _jsonpScript: HtmlTag
+    + constructor(githubId: String, githubRepoName: String, jsonpScript: HtmlTag)
+    - _loaded(content: String): Void
+    - _parseMD(content: String): Void
+}
+.....
+
+[plantuml, templatePattern_sequence, png]
+.....
+actor client
+participant s75img <<ImageLoader>>
+participant s75md <<MdLoader>>
+
+client -> s75img: constructor(githubId, githubRepoName, jsonpScript): ImageLoader
+activate s75img
+return s75img
+
+client -> s75img: load(path): Void
+activate s75img
+    s75img -> s75img: _load(content): Void
+    activate s75img
+    deactivate s75img
+deactivate s75img
+
+client -> s75md: constructor(githubId, githubRepoName, jsonpScript): ImageLoader
+activate s75md
+return s75md
+
+client -> s75md: load(path): Void
+activate s75md
+    s75md -> s75md: _load(content): Void
+    activate s75md
+        s75md -> s75md: _parseMD(content): Void
+        activate s75md
+            s75md -> Global: d64(content: String): String
+            activate Global
+            s75md <- Global: decodeURIComponent: String
+            deactivate Global
+        deactivate s75md
+    deactivate s75md
+deactivate s75md
+.....
+
+=== Strategy Pattern - 소유 위임
+
+link:{imagesdir}/strategyPattern03.html[]
+
+[plantuml, strategyPattern_class, png]
+.....
+class Global {
+    {static} d64: Function
+    {static} parseMD(content: String): String
+    {static} getHtmlTagUsingHtmlTagId: HtmlTag
+    {static} imgParser: Function
+    {static} mdParser: Function
+}
+
+class Github {
+    - {static} _callbackId: int
+    - {static} callback: Function
+    - _githubUriTemplate: String
+    + constructor(githubId: String, githubRepoName: String): GitHub
+    + load(path: String): Void
+    + parser(parser: Function): Setter
+}
+.....
+
+[plantuml, strategyPattern_sequence, png]
+.....
+actor client
+
+client -> gitHub: constructor(githubId, githubRepoName): Github
+activate gitHub
+return gitHub
+
+client -> gitHub: parser(imgParser): Setter
+activate gitHub
+deactivate gitHub
+
+client -> gitHub: load(path): Void
+activate gitHub
+deactivate gitHub
+
+client -> gitHub: parser(mdParser): Setter
+activate gitHub
+deactivate gitHub
+
+client -> gitHub: load(path): Void
+ctivate gitHub
+deactivate gitHub
+.....
+
+=== Command Pattern
+
+전략 패턴의 발전형
+
+* Comand
+** 전략 객체 & 전략이 사용하는 인자들을 묶어서 하나의 커맨드 객체로 만들어 사용
+
+link:{imagesdir}/commandPattern04.html[]
+
+[plantuml, commandPattern_class, png]
+.....
+Github -> Command
+
+class Global {
+    {static} d64: Function
+    {static} parseMD(content: String): String
+    {static} getHtmlTagUsingHtmlTagId: HtmlTag
+    {static} imgParser: Function
+    {static} mdParser: Function
+}
+
+class Github {
+    - {static} _callbackId: int
+    - {static} callback: Function
+    - _githubUriTemplate: String
+    - _command: Command
+    + constructor(githubId: String, githubRepoName: String): GitHub
+    + load(path: String): Void
+    + command(command: Command): Setter
+}
+
+class Command {
+    - _parser: Function
+    - _args: Array
+    + constructor(parser: Function, args: Array)
+    + parser: Getter
+    + args: Getter
+}
+.....
+
+[plantuml, commandPattern_sequence, png]
+.....
+actor client
+participant gitHub <<Github>>
+participant imgCommand <<Command>>
+participant mdCommand <<Command>>
+
+client -> gitHub: constructor(githubId: String, githubRepoName: String): Github
+activate gitHub
+return gitHub
+
+client -> imgCommand: constructor(imgParser: Function, args: Array): Command
+activate imgCommand
+return imgCommand
+
+client -> gitHub: command(imgCommand: Command): Setter
+activate gitHub
+deactivate gitHub
+
+client -> gitHub: load(path): Void
+activate gitHub
+deactivate gitHub
+
+client -> mdCommand: constructor(mdParser: Function, args: Array): Command
+activate mdCommand
+return mdCommand
+
+client -> gitHub: command(mdCommand: Command): Setter
+activate gitHub
+deactivate gitHub
+
+client -> gitHub: load(path): Void
+activate gitHub
+deactivate gitHub
+.....
+
+=== Router
+
+Router: 경로 + 경로 해석기
+
+link:{imagesdir}/router05.html[]
+
+[plantuml, router_class, png]
+.....
+Github -> Command
+Loader -> Command
+Loader -> Github
+
+class Global {
+    {static} d64: Function
+    {static} parseMD(content: String): String
+    {static} getHtmlTagUsingHtmlTagId: HtmlTag
+    {static} imgParser: Function
+    {static} mdParser: Function
+}
+
+class Github {
+    - {static} _callbackId: int
+    - {static} callback: Function
+    - _githubUriTemplate: String
+    - _command: Command
+    + constructor(githubId: String, githubRepoName: String): GitHub
+    + load(path: String): Void
+    + command(command: Command): Setter
+}
+
+class Command {
+    - _parser: Function
+    - _args: Array
+    + constructor(parser: Function, args: Array)
+    + parser: Getter
+    + args: Getter
+}
+
+class Loader {
+    - _github: Github
+    - _router: Map
+    + constructor(githubId: String, githubRepoName: String): Loader
+    + add(ext: String, command: Command): Void
+    + load(path: String): Void
+}
+.....
+
+[plantuml, router_sequence, png]
+.....
+actor client
+participant loader <<Loader>>
+participant github <<Github>>
+participant imgCommand <<Command>>
+participant mdCommand <<Command>>
+
+client -> loader: constructor(githubId: String, githubRepoName: String): Loader
+activate loader
+    loader -> github: constructor(githubId: String, githubRepoName: String): GitHub
+    activate github
+    loader <- github: gitHub: GitHub
+    deactivate github
+return loader
+
+client -> imgCommand: constructor(imgParser: Function, args: Array): Command
+activate imgCommand
+return imgCommand
+
+client -> loader: add(ext: String, imgCommand: Command
+activate loader
+deactivate loader
+
+client -> loader: load(path: String): Void
+activate loader
+    loader -> github: command(command: Command): Setter
+    activate github
+    deactivate github
+    loader -> github: load(path: String): Void
+    activate github
+        github -> imgCommand: parser(content: String, args: Array): Void
+        activate imgCommand
+        deactivate imgCommand
+    deactivate github
+deactivate loader
+
+client -> mdCommand: constructor(mdParser: Function, args: Array): Command
+activate mdCommand
+return mdCommand
+
+client -> loader: add(ext: String, mdCommand: Command): Void
+activate loader
+deactivate loader
+
+client -> loader: load(path: String): Void
+activate loader
+    loader -> github: command(command: Command): Setter
+    activate github
+    deactivate github
+    loader -> github: load(path: String): Void
+    activate github
+        github -> mdCommand: parser(content: String, args: Array): Void
+        activate mdCommand
+        deactivate mdCommand
+    deactivate github
+deactivate loader
+.....

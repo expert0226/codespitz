@@ -1,69 +1,84 @@
 class Github {
-    constructor(id, repo) {
-        this._base = `https://api.github.com/repos/${id}/${repo}/contents/`;
+    constructor(githubId, githubRepoName) {
+        this._githubUriTemplate = `https://api.github.com/repos/${githubId}/${githubRepoName}/contents/`;
     }
 
     load(path) {
-        const id = "callback" + Github._id++;
-        const parser = this._parser;
-        Github[id] = ({data: {content}}) => {
-            delete Github[id];
-            document.head.removeChild(s);
-            // this._parser[0](content, ...this._parser[1]);
-            parser[0](content, ...parser[1]);
+        const callback = `callback${Github._callbackId++}`;
+        const { parser, args } = this._command;
+        Github[callback] = ({ data: { content }}) => {
+            delete Github[callback];
+            document.head.removeChild(callbackScript);
+            parser(content, ...args);
         };
-        const s = document.createElement("script");
-        s.src = `${this._base + path}?callback=Github.${id}`;
-        document.head.appendChild(s);
+        const callbackScript = document.createElement("script");
+        callbackScript.src = `${this._githubUriTemplate + path}?callback=Github.${callback}`;
+        document.head.appendChild(callbackScript);
     }
 
-    setParser(f, ...arg) {
-        this._parser = [f, arg];
+    set command(command) {
+        this._command = command;
     }
 }
 
-Github._id = 0;
+Github._callbackId = 0;
 
-const d64 = v => decodeURIComponent(
-    atob(v).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")
-);
+class Command {
+    constructor(parser, ...args) {
+        this._parser = parser;
+        this._args = args;
+    }
 
-function parseMD(v) {
-    return d64(v).split("\n").map(v => {
-        let i = 3;
-        while (i--) {
-            if (v.startsWith("#".repeat(i + 1))) return `<h$[i+1}>${v.substr(i + 1)}</h${i + 1}>`;
-        }
-        return v;
-    }).join("<br>");
+    get parser() { return this._parser; }
+    get args() { return this._args; }
 }
 
 class Loader {
-    constructor(id, repo) {
-        this._git = new Github(id, repo);
+    constructor(githubId, githubRepoName) {
+        this._github = new Github(githubId, githubRepoName);
         this._router = new Map;
     }
 
-    add(ext, f, ...arg) {
-        ext.split(",").forEach(v => this._router.set(v, [f, ...arg]));
+    add(ext, command) {
+        ext.split(",").forEach(v => this._router.set(v, command));
     }
 
-    load(v) {
-        const ext = v.split(".").pop();
+    load(path) {
+        const ext = path.split(".").pop();
         if (!this._router.has(ext)) return;
-        this._git.setParser(...this._router.get(ext));
-        this._git.load(v);
+        this._github.command = this._router.get(ext);
+        this._github.load(path);
     }
 }
 
-const el = v => document.querySelector(v);
+const d64 = content => decodeURIComponent(
+    atob(content).split("").map(char => "%" + ("00" + char.charCodeAt(0).toString(16)).slice(-2)).join("")
+);
 
-const loader = new Loader('closer27', 'codespitz75');
+function parseMD(content) {
+    return d64(content).split("\n").map(lineContent => {
+        let i = 3;
+        while (i--) {
+            if(lineContent.startsWith("#".repeat(i + 1))) return `<h$[i+1}>${lineContent.substr(i + 1)}</h${i + 1}>`;
+        }
+        return lineContent;
+    }).join("<br>");
+}
 
-const img = (v, el) => el.src = 'data:text/plain;base64,' + v;
-loader.add("jpg,png", img, el("#a"));
-loader.load("einBig.png");
+const getHtmlTagUsingHtmlTagId = htmlTagId => document.querySelector(htmlTagId);
 
-const md = (v, el) => el.innerHTML = parseMD(v);
-loader.add("md", md, el("#b"));
-loader.load("README.md");
+const imgParser = (content, htmlImageTag) => htmlImageTag.src = 'data:text/plain;base64,' + content;
+const mdParser = (content, htmlTag) => htmlTag.innerHTML = parseMD(content);
+
+{
+    const subPath = "src/main/resources/codespitz79/designpattern/";
+    const loader = new Loader('expert0226', 'codespitz');
+
+    const imgCommand = new Command(imgParser, getHtmlTagUsingHtmlTagId("#a"));
+    loader.add("jpg,png", imgCommand);
+    loader.load(`${subPath}mvc.jpg`);
+
+    const mdCommand = new Command(mdParser, getHtmlTagUsingHtmlTagId("#b"));
+    loader.add("md", mdCommand);
+    loader.load(`${subPath}ReadMe.md`);
+}

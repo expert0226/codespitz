@@ -1,60 +1,63 @@
 class Github {
-    constructor(id, repo) {
-        this._base = `https://api.github.com/repos/${id}/${repo}/contents/`;
+    constructor(githubId, githubRepoName) {
+        this._githubUriTemplate = `https://api.github.com/repos/${githubId}/${githubRepoName}/contents/`;
     }
 
     load(path) {
-        const id = `callback${Github._id++}`;
-        Github[id] = ({ data: { content }}) => {
-            delete Github[id];
-            document.head.removeChild(s);
+        const callback = `callback${Github._callbackId++}`;
+        Github[callback] = ({ data: { content }}) => {
+            delete Github[callback];
+            document.head.removeChild(callbackScript);
             this._loaded(content);
         };
-        const s = document.createElement("script");
-        s.src = `${this._base + path}?callback=Github.${id}`;
-        document.head.appendChild(s);
+        const callbackScript = document.createElement("script");
+        callbackScript.src = `${this._githubUriTemplate + path}?callback=Github.${callback}`;
+        document.head.appendChild(callbackScript);
     }
 
-    _loaded(v) { throw "override!"; }
+    _loaded(content) { throw "override!"; }
 }
 
-Github._id = 0;
+Github._callbackId = 0;
 
 class ImageLoader extends Github {
-    constructor(id, repo, target) {
-        super(id, repo);
-        this._target = target;
+    constructor(githubId, githubRepoName, jsonpScript) {
+        super(githubId, githubRepoName);
+        this._jsonpScript = jsonpScript;
     }
-    _loaded(v) {
-        this._target.src = 'data:text/plain;base64,' + v;
+    _loaded(content) {
+        this._jsonpScript.src = 'data:text/plain;base64,' + content;
     }
 }
 
 class MdLoader extends Github {
-    constructor(id, repo, target) {
-        super(id, repo);
-        this._target = target;
+    constructor(githubId, githubRepoName, jsonpScript) {
+        super(githubId, githubRepoName);
+        this._jsonpScript = jsonpScript;
     }
-    _loaded(v) {
-        this._target.innerHTML = this._parseMD(v);
+    _loaded(content) {
+        this._jsonpScript.innerHTML = this._parseMD(content);
     }
-    _parseMD(v) {
-        return d64(v).split("\n").map(v => {
+    _parseMD(content) {
+        return d64(content).split("\n").map(lineContent => {
             let i = 3;
             while (i--) {
-                if(v.startsWith("#".repeat(i + 1))) return `<h$[i+1}>${v.substr(i + 1)}</h${i + 1}>`;
+                if(lineContent.startsWith("#".repeat(i + 1))) return `<h$[i+1}>${lineContent.substr(i + 1)}</h${i + 1}>`;
             }
-            return v;
+            return lineContent;
         }).join("<br>");
     }
 }
 
-const d64 = v => decodeURIComponent(
-    atob(v).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")
+const d64 = content => decodeURIComponent(
+    atob(content).split("").map(char => "%" + ("00" + char.charCodeAt(0).toString(16)).slice(-2)).join("")
 );
 
-const s75img = new ImageLoader('expert0226', 'codespitz', document.querySelector('#a'));
-s75img.load("src/main/resources/codespitz79/designpattern/mvc.jpg");
+{
+    const subPath = "src/main/resources/codespitz79/designpattern/";
+    const s75img = new ImageLoader('expert0226', 'codespitz', document.querySelector('#a'));
+    s75img.load(`${subPath}mvc.jpg`);
 
-const s75md = new MdLoader("expert0226", "codespitz", document.querySelector("#b"));
-s75md.load("src/main/resources/codespitz79/designpattern/ReadMe.md");
+    const s75md = new MdLoader("expert0226", "codespitz", document.querySelector("#b"));
+    s75md.load(`${subPath}ReadMe.md`);
+}
