@@ -1,7 +1,7 @@
 :toc:
 :numbered:
 
-== Day02: 디자인 패턴
+== Day02: 디자인 패턴: Template Method, Strategy, Command Pattern & Router
 ifndef::imagesdir:[:imagesdir: .]
 
 === 객체 지향 언어의 필수 요건

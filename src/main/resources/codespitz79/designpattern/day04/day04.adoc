@@ -1,0 +1,9 @@
+:toc:
+:numbered:
+
+== day04: Visitor Pattern
+ifndef::imagesdir:[:imagesdir: .]
+
+Composite Pattern 은 루프와 루르에서 할 일이 짬봉으로 되어 있다.
+
+Visitor Pattern 은 루프와 루프에서 할 일을 분리하기 위한 패턴이다.

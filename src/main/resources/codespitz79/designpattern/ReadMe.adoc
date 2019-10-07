@@ -126,5 +126,7 @@
 //include::day01/day01.adoc[1 일차]
 //:imagesdir: day02
 //include::day02/day02.adoc[2 일차]
+//:imagesdir: day03
+//include::day03/day03.adoc[3 일차]
 
 진도: link:https://youtu.be/LB3OvN8ctso?list=PLBNdLLaRx_rLzsln__WwoOuGwt0ZnAmS5&t=4935[]]
