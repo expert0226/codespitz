@@ -37,31 +37,69 @@ const el = (tag, attr = {}) => Object.entries(attr).reduce((el, v) => {
     return el;
 }, document.createElement(tag));
 
-const DomRenderer = class {
-    constructor(parent) {
-        this._parent = parent;
+const Renderer = class {
+    setVisitor(visitor) {
+        this.visitor = visitor;
     }
 
-    render(data) {
-        const { task: { _title: title }, list } = data;
-        const parent = document.querySelector(this._parent);
+    render({ task, list }) {
+        const v = this.visitor.folder(task);
+        this.subTask(this.visitor.parent(v, task), list);
+    }
+
+    subTask(parent, list) {
+        list.forEach(({ task, list }) => {
+            const v = this.visitor.task(parent, task);
+            this.subTask(this.visitor.parent(v, this), list);
+        })
+    }
+};
+
+const Visitor = class {
+    folder(task) { throw "override"; }
+    parent(v, task) { throw "override"; }
+    task(v, task) { throw "override"; }
+};
+
+const DomVisitor = class extends Visitor {
+    constructor(parent) {
+        super();
+        this._p = parent;
+    }
+
+    folder({ _title: title }) {
+        const parent = document.querySelector(this._p);
         parent.innerHTML = "";
         parent.appendChild(el("h1", { innerHTML: title }));
-        parent.appendChild(this._render(el("ul"), list));
-    }
-
-    _render(parent, list) {
-        list.forEach(({ task, list }) => {
-            const checkbox = el("input", { type: "checkbox", checked: task.isComplete() });
-            const div = el("div", { innerHTML: task._title });
-            div.appendChild(checkbox);
-
-            const li = parent.appendChild(el("li"));
-            li.appendChild(div);
-            if(list.length) li.appendChild(this._render(el("ul"), list));
-        });
         return parent;
     }
+
+    parent(v, _) {
+        return v.appendChild(el("ul"))
+    }
+
+    task(v, { _title: title }) {
+        const li = v.appendChild(el("li"));
+        li.appendChild(el("div", { innerHTML: title }))
+        return li;
+    }
+};
+
+const ConsoleVisitor = class extends Visitor {
+  folder({ _title: title }) {
+      console.log("---------------");
+      console.log("folder: ", title);
+      return '';
+  }
+
+  parent(v, task) {
+      return v;
+  }
+
+  task(v, { _title: title }) {
+      console.log(v, title);
+      return v + '--';
+  }
 };
 
 // User Story
@@ -82,8 +120,11 @@ const DomRenderer = class {
     sublist[1].task.add("디자인 개선");
     sublist[1].task._isComplete = true;
 
-    const todo = new DomRenderer("#a");
+    const todo = new Renderer();
 
+    todo.setVisitor(new DomVisitor("#a"));
     todo.render(folder.list("title"));
-    console.log(folder.list("title"))
+
+    todo.setVisitor(new ConsoleVisitor());
+    todo.render(folder.list("title"));
 }

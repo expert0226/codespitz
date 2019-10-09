@@ -64,6 +64,22 @@ const DomRenderer = class {
     }
 };
 
+const ConsoleRenderer = class {
+    render(data) {
+        const { task: { _title: title }, list } = data;
+        console.log("---------------");
+        console.log("folder: ", title);
+        this._render("", list);
+    }
+
+    _render(indent, list) {
+        list.forEach(({ task: { _title: title }, list}) => {
+            console.log(indent + title );
+            this._render(indent + '--', list);
+        })
+    }
+};
+
 // User Story
 {
     const folder = new Task("s3-4");
@@ -85,5 +101,9 @@ const DomRenderer = class {
     const todo = new DomRenderer("#a");
 
     todo.render(folder.list("title"));
-    console.log(folder.list("title"))
+    // console.log(folder.list("title"));
+
+    const consoleRenderer = new ConsoleRenderer();
+
+    consoleRenderer.render(folder.list("title"));
 }
