@@ -1,0 +1,58 @@
+:toc:
+:numbered:
+
+== day04: Visitor Pattern
+ifndef::imagesdir:[:imagesdir: .]
+
+Composite Pattern 은 루프와 루르에서 할 일이 짬봉으로 되어 있다.
+
+Visitor Pattern 은 루프와 루프에서 할 일을 분리하기 위한 패턴이다.
+
+=== AS-IS
+
+link:{imagesdir}/asis01.html[]
+
+* 문제: DomRenderer 의 응집도가 낮다.
+** Dom 에 대한 지식
+** 데이터를 순회하는 지식
+
+=== Template Method Pattern 적용
+
+DomRenderer 와 ConsoleRenderer 의 베이스 클래스를 생성해서 공통 지식을 베이스 클래스로 이동시켜 보자.
+
+link:{imagesdir}/templateMethodPattern02.html[]
+
+프로그래밍 언어에 대해 당신은 네이티브인가?
+
+---
+
+* Template Method Pattern 에 Hook 이 여러 개 있는 경우 훅 간에 Context 를 유지할 수 있는 장치
+** 리턴값
+** 인자
+** 공유 객체
+** ...
+
+---
+
+* 상속 관계를 쓰는 본질적인 이유
+** this 컨텍스트 유지
+
+---
+
+* 문제
+** 구현된 DomRenderer 와 ConsoleRenderer 내부에서 this 를 사용하지 않는다.
+*** 고로 상속의 대상이 아니었다.
+*** is a (kind of) 관계가 아니다.
+
+---
+
+* 메서드는 반드시 this 를 사용한다.
+** this 가 없다면 유틸리티 함수다.
+
+=== Visitor Pattern 적용
+
+Visitor Pattern 은 기본적으로 Strategy Pattern 이다.
+
+복잡한 루프(or 처리)와 그 루프(or 처리) 안에서 처리하는 로직을 분리하는 패턴이다.
+
+link:{imagesdir}/visitorPattern03.html[]]

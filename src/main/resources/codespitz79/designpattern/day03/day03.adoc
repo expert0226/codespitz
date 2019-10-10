@@ -1,4 +1,148 @@
 :toc:
 :numbered:
 
-== Day03
+== Day03: Composite Pattern
+ifndef::imagesdir:[:imagesdir: .]
+
+디자인 패턴은 제어문을 객체 관계로 푸는 것이다.
+
+#기획/디자인을 보고 클리이언트 코드부터 만들어가면서 모델링을 진행하는 것이 유일하고 올바른 방법이다.#
+
+의존성이 낮은 것부터 설계한다. 즉 독립 객체부터 개발한다.
+
+=== 메서드 구분
+
+* 제일 메서드: 인자가 없는 메서드
+* 그 다음 좋은 메서드: 인자가 하나인 메서드
+* 그 이후는 다 나쁜 메서드
+* 인자가 늘어날수록 의존성이 증가하기 때문에
+** 메서드 내부를 변경했을 때 캡슐화를 깨게 되기 때문에 Side Effect 발생 확를이 높다.
+** 결합도가 높아진다.
+
+=== 함수형 vs 객체 지향
+
+* 함수형: 값으로 비교
+** 객체는 무의미하다.
+** 메모리 주소를 써도 되는 경우
+*** 인자
+*** 지역변수
+*** 내부에서 해소되서 해당 스코프를 벗어나지 않는 경우
+* 객체 지향: 참조 주소로 비교
+** Entry 메서드를 제외한 메서드의 인자는 반드시 참조여야 한다.
+*** Entry 메서드는 값이 들어오면 그것을 객채로 변환한다.
+*** 생성자, 세터 등등
+
+=== todo 1
+
+link:{imagesdir}/todo01.html[]
+
+[plantuml, todo01_class, png]
+....
+@startuml
+class Task {
+    - _title: String
+    - _date: Date
+    - _isComplete: Boolean
+    + constructor(title: String, date: Date): Task
+    + isComplete(): Boolean
+    + toggle(): Void
+    + sortTitle(task: Task): Boolean
+    + sortDate(task: Task): Boolean
+}
+
+object taskSort {
+    title: Function
+    date: Function
+}
+@enduml
+....
+
+* 문제: taskSort 는 제대로 된 객체가 아니다.
+** taskSort 의 title,. date 함수는 Task 전체를 알고 있다는 전제가 내제 되어 있다.
+
+=== todo 2
+
+link:{imagesdir}/todo02.html[]
+
+[plantuml, todo02_class, png]
+....
+@startuml
+Sort <|-- Task
+
+class Sort {
+    + {static} title: Function
+    + {static} date: Function
+    + sortTitle(task: Task): Boolean
+    + sortDate(task: Task): Boolean
+}
+
+class Task {
+    - _title: String
+    - _date: Date
+    - _isComplete: Boolean
+    + {static} get(title: String, date: Date): Task
+    - constructor(title: String, date: Date): Task
+    + isComplete(): Boolean
+    + toggle(): Void
+    + sortTitle(task: Task): Boolean
+    + sortDate(task: Task): Boolean
+}
+
+class TaskList {
+    - _title: String
+    - _list: List<Task>
+    + constructor(title: String): TaskList
+    + add(title: String, date: Date): Void
+    + remove(task: Task): Void
+    + byTitle(useGroupSort: Boolean)
+    + byDate(useGroupSort: Boolean)
+    - _getList(comparator: Comparator, useGroupSort: Boolean): List<Task>
+}
+@enduml
+....
+
+* 해결: Sort 클래스의 title,. date 함수는 Sort 만 알면 된다. 실제 구현은 하위 클래스가 구현할지라도
+
+* 해석: Task 클래스의 팩토리 함수가 get 을 만든 이유
+** 생성자를 공개하기 싫다.
+** 생성 로직의 캡슐화
+*** 생성자에 대한 지식을 외부에 노출하지 않음으로써 생성장에 대한 수정이 자유로워진다.
+
+=== todo 3: Task 가 하부 Task 를 갖게 하고 싶다.
+
+link:{imagesdir}/todo03.html[]
+
+[plantuml, todo03_class, png]
+....
+@startuml
+class Task {
+    - _title: String
+    - _date: Date
+    - _isComplete: Boolean
+    - _list: List<Task>
+    + constructor(title: String, date: Date): Task
+    + isComplete(): Boolean
+    + toggle(): Void
+    + add(title: String, date: Date): Void
+    + remove(task: Task): Void
+    + byTitle(stateGroup: Boolean)
+    + byDate(stateGroup: Boolean)
+    + list(comparator: Comparator, useGroupSort: Boolean): { this: Task, list: List<Task> }
+}
+@enduml
+....
+
+* 해석:
+* 기존 Task 와 TaskList 를 병합
+* Task 의 팩토리 메서드 get(title, date) 가 사라진 이유
+** 이전에는 TaskList 에서 Task 생성했기 때문에 갭슐화를 위해 Task 의 팩토리 메서드 제공
+** 지금은 Task 에서 Task 를 생성하기 때문에 팩토리 제공의 의미가 엇다.
+
+* 문제:
+** list 메서드가 반환하는 { task, List<Task> } 를 반환하기 때문에 리커시브하게 list 를 호출할 수 없다.
+
+=== todo 4: Composite Pattern 적용
+
+* Composite Pattern 으로 구현된 Data 를 순회하기 위해서는 Composite Pattern 또는 Visitor Pattern 이 필요하다.
+
+link:{imagesdir}/todo04.html[]
