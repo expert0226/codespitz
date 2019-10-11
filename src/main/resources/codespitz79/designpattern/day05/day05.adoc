@@ -1,0 +1,5 @@
+:toc:
+:numbered:
+
+== Day05
+ifndef::imagesdir:[:imagesdir: .]
