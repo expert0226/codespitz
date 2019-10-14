@@ -27,15 +27,25 @@ link:{imagesdir}/templateMethodPattern02.html[]
 ---
 
 * Template Method Pattern 에 Hook 이 여러 개 있는 경우 훅 간에 Context 를 유지할 수 있는 장치
-** 리턴값
-** 인자
-** 공유 객체
-** ...
+Environment
 
 ---
 
 * 상속 관계를 쓰는 본질적인 이유
 ** this 컨텍스트 유지
+
+---
+* Lexical Environment
+** Scope: 언어가 제공하는 것
+** 사용자 정의
+
+---
+* 함수 vs. 메서드
+** this 의 사용 여부
+
+----
+만들고 나서 코드를 설계 관점에서 재정검해야 한다.
+----
 
 ---
 
@@ -51,8 +61,12 @@ link:{imagesdir}/templateMethodPattern02.html[]
 
 === Visitor Pattern 적용
 
+----
 Visitor Pattern 은 기본적으로 Strategy Pattern 이다.
 
 복잡한 루프(or 처리)와 그 루프(or 처리) 안에서 처리하는 로직을 분리하는 패턴이다.
+----
 
-link:{imagesdir}/visitorPattern03.html[]]
+link:{imagesdir}/visitorPattern03.html[]
+
+

@@ -132,5 +132,7 @@
 //include::day02/day02.adoc[2 일차]
 //:imagesdir: day03
 //include::day03/day03.adoc[3 일차]
+//:imagesdir: day04
+//include::day04/day04.adoc[3 일차]
 
-진도: link:https://youtu.be/LB3OvN8ctso?list=PLBNdLLaRx_rLzsln__WwoOuGwt0ZnAmS5&t=4935[]]
+진도: link:https://youtu.be/7xwWn8vbRsA?list=PLBNdLLaRx_rLzsln__WwoOuGwt0ZnAmS5&t=396[]

@@ -1,0 +1,18 @@
+:toc:
+:numbered:
+
+== Day05
+ifndef::imagesdir:[:imagesdir: .]
+
+=== Visitor Pattern
+
+본인의 상태를 본인이 관리하는 코드로 변
+
+link:{imagesdir}/visitorPattern01.html[]
+
+=== Interface
+
+----
+interface 는 언어별 고유 명사다!!!
+----
+

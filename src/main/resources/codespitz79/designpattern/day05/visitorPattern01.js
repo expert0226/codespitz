@@ -43,25 +43,64 @@ const Renderer = class {
     }
 
     render({ task, list }) {
-        const v = this.visitor.folder(task);
-        this.subTask(this.visitor.parent(v, task), list);
+        // const v = this.visitor.folder(task);
+        this.visitor.folder(task);
+        // this.subTask(this.visitor.parent(v, task), list);
+        this.visitor.parent(task);
+        this.subTask(list);
     }
 
-    subTask(parent, list) {
+    subTask(list) {
         list.forEach(({ task, list }) => {
-            const v = this.visitor.task(parent, task);
-            this.subTask(this.visitor.parent(v, this), list);
+            // const v = this.visitor.task(parent, task);
+            this.visitor.task(task);
+            // this.subTask(this.visitor.parent(v, this), list);
+            if(list.length) {
+                this.visitor.parent(task);
+                this.subTask(list);
+            }
         })
     }
 };
 
-const Visitor = class {
+// const Visitor = class {
+//     folder(task) { throw "override"; }
+//     parent(v, task) { throw "override"; }
+//     task(v, task) { throw "override"; }
+// };
+
+Renderer.Visitor = class {
+    constructor() { this.prop = Object.create(null); }
     folder(task) { throw "override"; }
     parent(v, task) { throw "override"; }
     task(v, task) { throw "override"; }
 };
 
-const DomVisitor = class extends Visitor {
+// const DomVisitor = class extends Visitor {
+//     constructor(parent) {
+//         super();
+//         this._p = parent;
+//     }
+//
+//     folder({ _title: title }) {
+//         const parent = document.querySelector(this._p);
+//         parent.innerHTML = "";
+//         parent.appendChild(el("h1", { innerHTML: title }));
+//         return parent;
+//     }
+//
+//     parent(v, _) {
+//         return v.appendChild(el("ul"))
+//     }
+//
+//     task(v, { _title: title }) {
+//         const li = v.appendChild(el("li"));
+//         li.appendChild(el("div", { innerHTML: title }));
+//         return li;
+//     }
+// };
+
+const DomVisitor = class extends Renderer.Visitor {
     constructor(parent) {
         super();
         this._p = parent;
@@ -71,21 +110,24 @@ const DomVisitor = class extends Visitor {
         const parent = document.querySelector(this._p);
         parent.innerHTML = "";
         parent.appendChild(el("h1", { innerHTML: title }));
-        return parent;
+        this.prop.parent = parent;
     }
 
-    parent(v, _) {
-        return v.appendChild(el("ul"))
+    parent(task) {
+        const ul = el("ul");
+        this.prop.parent.appendChild(ul);
+        this.prop.parent = ul;
     }
 
-    task(v, { _title: title }) {
-        const li = v.appendChild(el("li"));
-        li.appendChild(el("div", { innerHTML: title }));
-        return li;
+    task(task) {
+        const li = el("li");
+        li.appendChild(el("div", { innerHTML: task._title }));
+        this.prop.parent.appendChild(li);
+        this.prop.parent = li;
     }
 };
 
-const ConsoleVisitor = class extends Visitor {
+const ConsoleVisitor = class extends Renderer.Visitor {
   folder({ _title: title }) {
       console.log("---------------");
       console.log("folder: ", title);
@@ -124,7 +166,7 @@ const ConsoleVisitor = class extends Visitor {
 
     todo.setVisitor(new DomVisitor("#a"));
     todo.render(folder.list("title"));
-
-    todo.setVisitor(new ConsoleVisitor());
-    todo.render(folder.list("title"));
+    //
+    // todo.setVisitor(new ConsoleVisitor());
+    // todo.render(folder.list("title"));
 }
