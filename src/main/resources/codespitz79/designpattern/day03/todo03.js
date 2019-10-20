@@ -15,10 +15,10 @@ const Task = class {
         if(list.includes(task)) list.splice(list.indexOf(task), 1);
     }
 
-    byTitle(useGroupSort = true) { return this.list("title", useGroupSort); }
-    byDate(useGroupSort = true) { return this.list("date", useGroupSort); }
+    byTitle(useGroupSort = true) { return this.sortBy("title", useGroupSort); }
+    byDate(useGroupSort = true) { return this.sortBy("date", useGroupSort); }
 
-    list(sort, useGroupSort = true) {
+    sortBy(sort, useGroupSort = true) {
         const list = this._list;
         const comparator = (a, b) => a['_' + sort] > b['_' + sort] ? 1 : -1;
         return {

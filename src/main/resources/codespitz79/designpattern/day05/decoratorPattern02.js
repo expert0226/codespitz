@@ -63,12 +63,6 @@ const Renderer = class {
     }
 };
 
-// const Visitor = class {
-//     folder(task) { throw "override"; }
-//     parent(v, task) { throw "override"; }
-//     task(v, task) { throw "override"; }
-// };
-
 Renderer.Visitor = class {
     constructor() { this.prop = Object.create(null); }
     folder(task) { throw "override"; }
@@ -76,34 +70,11 @@ Renderer.Visitor = class {
     task(v, task) { throw "override"; }
 };
 
-// const DomVisitor = class extends Visitor {
-//     constructor(parent) {
-//         super();
-//         this._p = parent;
-//     }
-//
-//     folder({ _title: title }) {
-//         const parent = document.querySelector(this._p);
-//         parent.innerHTML = "";
-//         parent.appendChild(el("h1", { innerHTML: title }));
-//         return parent;
-//     }
-//
-//     parent(v, _) {
-//         return v.appendChild(el("ul"))
-//     }
-//
-//     task(v, { _title: title }) {
-//         const li = v.appendChild(el("li"));
-//         li.appendChild(el("div", { innerHTML: title }));
-//         return li;
-//     }
-// };
-
 const DomVisitor = class extends Renderer.Visitor {
     constructor(parent) {
         super();
         this._p = parent;
+        this._taskDecoratior = TaskDecorator.base;
     }
 
     folder({ _title: title }) {
@@ -117,13 +88,18 @@ const DomVisitor = class extends Renderer.Visitor {
         const ul = el("ul");
         this.prop.parent.appendChild(ul);
         this.prop.parent = ul;
+        this.prop.parentTask = task;
     }
 
     task(task) {
-        const li = el("li");
-        li.appendChild(el("div", { innerHTML: task._title }));
+        const li = el("li", { innerHTML: this._taskDecoratior.task(this.prop.parentTask, task)});
+        // li.appendChild(el("div", { innerHTML: task._title }));
         this.prop.parent.appendChild(li);
         this.prop.parent = li;
+    }
+
+    taskDecorator(...taskDecorators) {
+        taskDecorators.forEach(taskDecorator => this._taskDecoratior = taskDecorator.set(this._taskDecoratior));
     }
 };
 
@@ -144,6 +120,44 @@ const ConsoleVisitor = class extends Renderer.Visitor {
   }
 };
 
+// Decorator
+const TaskDecorator = class {
+    set(prevTaskDecorator) { this._prevTaskDecorator = prevTaskDecorator; return this; }
+
+    task(parent, task) {
+        this.result = this._prevTaskDecorator ? this._prevTaskDecorator.task(parent, task) : task._title;
+        return this._task(parent, task);
+    }
+
+    _task(parent, task) { throw "override!" }
+};
+
+// End Point
+TaskDecorator.base = new (class extends TaskDecorator {
+    _task(parent, task) { return this.result; }
+});
+
+const Priority = class extends TaskDecorator {
+    _task(parent, task) {
+        return this.result.replace(
+            /(urgent|high|normal|low)/gi, `<span class='$1'>$1</span>`
+        )
+    }
+};
+
+const Member = class extends TaskDecorator {
+    constructor(...members) {
+        super();
+        this._reg = new RegExp(`(${members.join('|')})`, "g");
+    }
+
+    _task(task, parent) {
+        return this.result.replace(
+            this._reg, '<a href="member/$1">$1</a>'
+        )
+    }
+};
+
 // User Story
 {
     const folder = new Task("s3-4");
@@ -153,18 +167,20 @@ const ConsoleVisitor = class extends Renderer.Visitor {
 
     const { list } = folder.sortBy("title");
 
-    list[1].task.add("ppt 정리");
-    list[1].task.add("코드 정리");
+    list[1].task.add("urgent ppt 정리");
+    list[1].task.add("코드 normal 정리");
 
     const { list: sublist } = list[1].task.sortBy("title");
 
-    sublist[1].task.add("슬라이드 마스터 정리");
-    sublist[1].task.add("디자인 개선");
+    sublist[1].task.add("슬라이드 hika 마스터 summer 정리 high");
+    sublist[1].task.add("low 디자인 개선");
     sublist[1].task._isComplete = true;
 
     const todo = new Renderer();
 
-    todo.setVisitor(new DomVisitor("#a"));
+    const domVisitor = new DomVisitor("#a");
+    domVisitor.taskDecorator(new Member("hika", "summer"), new Priority());
+    todo.setVisitor(domVisitor);
     todo.render(folder.sortBy("title"));
     //
     // todo.setVisitor(new ConsoleVisitor());

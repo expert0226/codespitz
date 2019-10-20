@@ -15,13 +15,13 @@ const Task = class {
         if(list.includes(task)) list.splice(list.indexOf(task), 1);
     }
 
-    byTitle(useGroupSort = true) { return this.list("title", useGroupSort); }
-    byDate(useGroupSort = true) { return this.list("date", useGroupSort); }
+    byTitle(useGroupSort = true) { return this.sortBy("title", useGroupSort); }
+    byDate(useGroupSort = true) { return this.sortBy("date", useGroupSort); }
 
-    list(sort, useGroupSort = true) {
+    sortBy(sort, useGroupSort = true) {
         const list = this._list;
         const comparator = (a, b) => a['_' + sort] > b['_' + sort] ? 1 : -1;
-        const mapper = task => task.list(sort, useGroupSort);
+        const mapper = task => task.sortBy(sort, useGroupSort);
         return {
             task: this,
             list: !useGroupSort ? list.sort(comparator).map(mapper) : [
@@ -87,12 +87,12 @@ const ConsoleRenderer = class {
     folder.add("2강 교안 작성");
     folder.add("3강 교안 작성");
 
-    const { list } = folder.list("title");
+    const { list } = folder.sortBy("title");
 
     list[1].task.add("ppt 정리");
     list[1].task.add("코드 정리");
 
-    const { list: sublist } = list[1].task.list("title");
+    const { list: sublist } = list[1].task.sortBy("title");
 
     sublist[1].task.add("슬라이드 마스터 정리");
     sublist[1].task.add("디자인 개선");
@@ -100,10 +100,10 @@ const ConsoleRenderer = class {
 
     const todo = new DomRenderer("#a");
 
-    todo.render(folder.list("title"));
+    todo.render(folder.sortBy("title"));
     // console.log(folder.list("title"));
 
     const consoleRenderer = new ConsoleRenderer();
 
-    consoleRenderer.render(folder.list("title"));
+    consoleRenderer.render(folder.sortBy("title"));
 }

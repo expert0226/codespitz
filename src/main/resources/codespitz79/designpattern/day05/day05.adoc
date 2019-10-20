@@ -20,3 +20,61 @@ link:{imagesdir}/visitorPattern01.html[]
 interface 는 언어별 고유 명사다!!!
 ----
 
+* ES: Duck Typing
+* Java: interface 키워드
+
+----
+* 공변, 반공변(LSP)
+** 인자가 공변: 인자에 하위형을 넣을 수 있다.
+*** 메소드 내에서 상위형인척 할 수 있으니까!
+** 리턴값은 반공변: 리턴값은 상위형에 대입할 수 있다.
+* 결론
+** 결국 강아지는 동물인척 할 수 있다.
+** 동물을 인자로 받는 메서드에 강아지를 인자로 전달할 수 있다.
+*** 메서드 내에서 강아지는 동물인 척할 것이다.
+*** 동물을_넣어주세요(강아지)
+** 리턴값이 강아지라면 동물 역활에 대입할 수 있다.
+*** 동물 ani = 강아지를_반환합니다()
+----
+
+---
+* [ +T ] 공변성 : 타입 T를 확장한 타입에 대해서 허용
+* [  T ] 무공변성 : 타입 T만 허용
+* [ -T ] 반공변성: 타입 T의 상위(부모) 타입에 대해서 허용
+
+---
+* 내부에서 this 를 사용한다면 Method
+* 사용하지 않으면 (유틸리티) Function
+
+=== Decorator Pattern
+
+Decorator 는 (원본이 훼손되지 않기 때문에) UnDo, ReDo 를 구현할 수 있다. +
+Command Pattern 과 관련 있다. +
+Composite Pattern 과 유사한 방식으로 문제를 해결한다. +
+다단계로 구현한 경우 Recursive 로 루프를 돌게 된다.
+
+---
+.DomVisitor 에 Decorator 적용
+link:{imagesdir}/decoratorPattern02.html[]
+
+---
+.Domvisitor 의 Base Class 인 Render.Visitor 로 Decorator 이동
+link:{imagesdir}/decoratorPattern03.html[]
+
+=== Observer Pattern
+
+문제: innerHTML 에 값 컨텍스트가 쓰였다.
+
+link:{imagesdir}/observerPattern04.html[]
+
+문제: Remove 가 생성자에 render 받아서, 너무 막강한 권력을 가지게 됐다.
+
+link:https://youtu.be/7xwWn8vbRsA?list=PLBNdLLaRx_rLzsln__WwoOuGwt0ZnAmS5&t=2832[코드스피츠 79 ES6+ 디자인패턴과 뷰패턴]
+
+해결: 헐리웃 원칙 적용(Observer Pattern)
+
+최종 권한자만이....
+
+link:{imagesdir}/observerPattern05.html[]
+
+
