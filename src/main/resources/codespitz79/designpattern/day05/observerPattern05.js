@@ -19,6 +19,8 @@ const Task = class {
     byDate(useGroupSort = true) { return this.sortBy("date", useGroupSort); }
 
     sortBy(sort, useGroupSort = true) {
+        this._sort = sort;
+
         const list = this._list;
         const comparator = (a, b) => a['_' + sort] > b['_' + sort] ? 1 : -1;
         const mapper = task => task.sortBy(sort, useGroupSort);
@@ -29,6 +31,10 @@ const Task = class {
                 ...list.filter(v => v.isComplete()).sort(comparator).map(mapper)
             ]
         }
+    }
+
+    sort() {
+        return this.sortBy(this._sort);
     }
 };
 
@@ -46,7 +52,8 @@ const Renderer = class {
     observe(type) { type == "reRender" && this.reRender(); }
 
     reRender() {
-        this.oldList && this.render(this.oldList);
+        // this.oldList && this.render(this.oldList.task.sortBy("title"));
+        this.oldList && this.render(this.oldList.task.sort());
     }
 
     render(list) {
@@ -237,5 +244,6 @@ RemoveDecorator.id = 0;
 
     const todo = new Renderer();
     todo.setVisitor(domVisitor);
-    todo.render(folder.sortBy('title'));
+    const myList = folder.sortBy('title');
+    todo.render(myList);
 //}
