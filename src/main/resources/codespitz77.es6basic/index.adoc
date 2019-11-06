@@ -1,0 +1,182 @@
+:toc:
+:numbered:
+
+== Day01
+
+.Why did you do that?
+[cols="^,^,^", options="header,footer"]
+|====
+|철학 2+|합리주의 vs. 상대주의
+|[red]#가치#|[red]#원칙#|[red]#패턴(선배들의 경험)#
+|의사소통|지역화(Scope)|개발론(OOP, FP, FRP...)
+|단순함|중복제거|설계론
+|유연함|대칭성|각종 적용 패턴
+3+|[red]#동기#
+3+|돈 + 시간
+|====
+
+.Program & Timing
+[cols=">,<,>,<"]
+|====
+2+^|Compile Language 2+^|Script Language
+|Language Code|Lint Time|Language Code|Lint Time
+|Machine Language|Compile Time|File|
+|File||Load|
+|Load ([red]#Program# - Memory 적재 상태)||Machine Language|
+|Run|Run Time|Run|Run Time
+|Terminate||Terminate|
+|====
+
+.TIP
+* 용어를 정확히 설명할 수 없다면 공부한 것이 아니다.
+* 책을 보았다면
+** 모르는 용어가 없게 하라.
+** 아는 용어도 맞게 아는지 확인하라.
+
+.참조의 참조
+* 예
+** 링크드 리스트
+** 인터페이스 & 구상클래스
+** 추상클래스 & 구상클래스
+** 데코레이터 패턴, 비지터 패턴, 컴패지트 패턴 등등
+
+.참조 문제의 해결
+* OOP
+** 더블 디스패치: 참조의 참조
+* FP
+** 참조를 사용하지 마!!!
+** 값만 사용해!!!
+
+.Literal
+* 더 이상 나눌 수 없는 값의 최소 표현
+
+.Language Element
+* Statement
+** 실행기에 주는 힌트
+* Expression
+** 하나의 값으로 수렴된다.
+* Identifier
+
+== Day02
+
+== Day03
+
+.IteratorResultObject interface
+[source, javascript]
+----
+{
+    value: ...,
+    done: true / false
+}
+----
+
+.iterator interface
+[source, javascript]
+----
+{
+    next() {
+        return IteratorResultObject
+    }
+}
+----
+
+.iterable interface
+[source, javascript]
+----
+{
+    [Symbol.iterator]() {
+        return Iterator
+    }
+}
+----
+
+.iterable example
+[source, javascript]
+----
+{
+    [Symbol.iterator]() {
+        return {
+            next() {
+                reture {
+                    value: 1,
+                    done: false
+                }
+            }
+        }
+    }
+}
+----
+
+* iterable 이 필요한 이유
+** iterator 은 한번 소비되고 없어지기 때문이다.
+*** iterable 은 하나의 iterator 를 반복적으로 사용하기 위한 장치이다.
+** 루프문을 식으로 변환하기 위한 장치
+*** 문은 사용되고 사리진다.
+*** 식은 값으로 수렴한다.
+
+TIP: 현대 언어는 문을 식을 바꾸고 싶어 한다. +
+문은 사라지지만 식은 값으로 수렴되어 재사용이 가능하다.
+
+NOTE: ES 에서 Thread 에 대한 Sleep 은 Frame 이라는 개념으로 처리한다.
+
+* es 에서의 Thread Sleep
+** node.js
+*** nexttick
+* browser
+** requestAnimation
+** setTimeout
+
+* Generator
+** Iterator 의 구현을 돕는다.
+
+.Iterator
+[source, javascript]
+----
+const N2 = class {
+    constructor(max) {
+        this.max = max;
+    }
+    [Symbol.iterator]() {
+        let cursor = 0, max = this.max;
+        return {
+            done: false,
+            next() {
+                if (cursor > max) {
+                   this.done = true;
+                } else {
+                   this.value = cursor * cursor;
+                   cursor++;
+                }
+                return this;
+            }
+        }
+    }
+}
+----
+
+.같은 일을 하는 Generator
+[source, javascript]
+----
+const generator = function*(max) {
+    let cursor = 0;
+    while(cursor < max) {
+        yield cursor * cursor;
+        cursor++;
+    }
+}
+----
+
+NOTE: routine 시작되면 끝까지 실행하는 loop 이다. +
+co-routine 은 loop 를 중간에 suspend 하고 다시 그 지점에서 실행하는 것을 반복할 수 있다.
+
+* routine
+** while, for
+* co-routine
+** generator
+*** yield 를 통해 suspend
+
+== Day04: Abstract Loop & Lazy Execution
+
+
+
+link:https://youtu.be/82UuFxh7wKc?list=PLBNdLLaRx_rIF3jAbhliedtfixePs5g2q&t=1722[코드스피츠77 - ES6+ 기초편 4회차]
